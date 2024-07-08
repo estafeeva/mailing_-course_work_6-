@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Березка</h1>
+    <p class="lead">Магазин Березка - все самое свежее!</p>
+    <a class="p-2 btn btn-outline-primary" href="product/create">Добавить текст рассылки</a>
+</div>
+
+<div class="container">
+    <div class="row text-center">
+        {% for product in product_list %}
+        {% if product.is_published or perms.catalog.set_published %}
+        <div class="col-3">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <a href="product/{{ product.pk }}"><h4 class="my-0 font-weight-normal {% if not product.is_published %} bg-danger {% endif %}">{{ product.name }}</h4></a>
+                </div>
+
+                <div class="card-body">
+                    <img class="col-9" src="{{ product.photo | media_filter }}">
+                    <h1 class="card-title pricing-card-title">{{ product.price }}</h1>
+                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                        <li>{% limit_text_100 product.description %}</li>
+                        {% for version in product.version_set.all %}
+                        {% if version.product == product and version.version_is_active == True %}
+                            <li>Версия: {{ version.version_number }}</li>
+                        {% endif %}
+                    {% endfor %}
+
+                    </ul>
+                    <button type="button" class="btn btn-lg btn-block btn-outline-primary">Купить</button>
+                    {% if perms.catalog.set_published and perms.catalog.change_category and perms.catalog.change_description or user == product.owner %}
+                    <a class="p-2 btn btn-outline-primary" href="product/update/{{ product.pk }}">Обновить продукт</a>
+                    <a class="p-2 btn btn-outline-primary" href="product/delete/{{ product.pk }}">Удалить продукт</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}
