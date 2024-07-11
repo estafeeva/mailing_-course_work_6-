@@ -1,5 +1,8 @@
 from django.db import models
 
+from users.models import User
+from pytils.translit import slugify
+
 
 class Client(models.Model):
     email = models.EmailField(unique=True, verbose_name="Email")
@@ -11,6 +14,7 @@ class Client(models.Model):
         help_text="Введите ФИО",
     )
     comment = models.TextField(max_length=350, verbose_name="Комментарий")
+    owner = models.ForeignKey(User, verbose_name='Владелец', blank=True, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         # Строковое отображение объекта
@@ -36,10 +40,12 @@ class MailingMessage(models.Model):
         verbose_name="Тело письма",
         help_text="Введите сообщение для рассылки",
     )
+    owner = models.ForeignKey(User, verbose_name='Владелец', blank=True, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         # Строковое отображение объекта
-        return f"Сообщение для рассылки: {self.topic}"
+        return (f"Тема  рассылки: {self.topic}"
+                f"Текст рассылки: {self.message}")
 
     class Meta:
         verbose_name = "рассылка (текст)"
@@ -47,9 +53,10 @@ class MailingMessage(models.Model):
 
 
 class MailingSettings(models.Model):
-    first_sent_datetime = models.DateTimeField(
+    first_sent_datetime = models.CharField(
         verbose_name="дата и время первой отправки рассылки",
         help_text="Укажите дату и время первой отправки рассылки",
+#        format="%d-%m-%Y %H^%M",
     )
     period = models.CharField(
         max_length=150,
@@ -67,11 +74,12 @@ class MailingSettings(models.Model):
     )
 
     # many (clients) to many (settings)
-    clients = models.ManyToManyField(Client)
+    clients = models.ManyToManyField(Client, related_name='mailingsettings')
+    owner = models.ForeignKey(User, verbose_name='Владелец', blank=True, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         # Строковое отображение объекта
-        return f"Рассылка (настройки): {self.mailing_text}"
+        return f"{self.mailing_message}"
 
     class Meta:
         verbose_name = "рассылка (настройки)"
@@ -106,3 +114,56 @@ class MailingAttempt(models.Model):
     class Meta:
         verbose_name = "попытка рассылки"
         verbose_name_plural = "попытки рассылок"
+
+
+
+class Blog(models.Model):
+    """заголовок;
+    slug (реализовать через CharField);
+    содержимое;
+    превью (изображение);
+    дата создания;
+    признак публикации;
+    количество просмотров."""
+
+    title = models.CharField(
+        max_length=100,
+        verbose_name="Заголовок статьи",
+        help_text="Введите заголовок статьи",
+    )
+    slug = models.CharField(
+        max_length=200,
+        verbose_name="slug",
+        blank=True,
+        null=True,
+    )
+    content = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Содержимое статьи",
+        help_text="Введите текст статьи",
+    )
+    preview = models.ImageField(
+        upload_to="media/photo",
+        blank=True,
+        null=True,
+        verbose_name="Превью",
+        help_text="Загрузите изображение",
+    )
+    created_at = models.DateField(
+        auto_created=True,
+        blank=True,
+        null=True,
+        verbose_name="Дата создания (записи в БД)",
+        help_text="Введите Дату создания",
+    )
+    is_publication = models.BooleanField(default=True, verbose_name="опубликовано")
+    views_count = models.PositiveIntegerField(default=0, verbose_name="просмотры")
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Статья"
+        verbose_name_plural = "Статьи"
+        ordering = ["title"]

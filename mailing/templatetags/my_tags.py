@@ -20,3 +20,11 @@ def media_filter(path):
     if path:
         return f"/media/{path}"
     return "#"
+
+
+@register.simple_tag
+def get_clients(data):
+    if data:
+        clients = '\n '.join([str(item) for item in data.all()])
+        return clients
+    return ''
