@@ -14,7 +14,9 @@ class Client(models.Model):
         help_text="Введите ФИО",
     )
     comment = models.TextField(max_length=350, verbose_name="Комментарий")
-    owner = models.ForeignKey(User, verbose_name='Владелец', blank=True, null=True, on_delete=models.SET_NULL)
+    owner = models.ForeignKey(
+        User, verbose_name="Владелец", blank=True, null=True, on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         # Строковое отображение объекта
@@ -40,12 +42,13 @@ class MailingMessage(models.Model):
         verbose_name="Тело письма",
         help_text="Введите сообщение для рассылки",
     )
-    owner = models.ForeignKey(User, verbose_name='Владелец', blank=True, null=True, on_delete=models.SET_NULL)
+    owner = models.ForeignKey(
+        User, verbose_name="Владелец", blank=True, null=True, on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         # Строковое отображение объекта
-        return (f"Тема  рассылки: {self.topic}"
-                f"Текст рассылки: {self.message}")
+        return f"Тема  рассылки: {self.topic}" f"Текст рассылки: {self.message}"
 
     class Meta:
         verbose_name = "рассылка (текст)"
@@ -56,7 +59,7 @@ class MailingSettings(models.Model):
     first_sent_datetime = models.CharField(
         verbose_name="дата и время первой отправки рассылки",
         help_text="Укажите дату и время первой отправки рассылки",
-#        format="%d-%m-%Y %H^%M",
+        #        format="%d-%m-%Y %H^%M",
     )
     period = models.CharField(
         max_length=150,
@@ -74,8 +77,10 @@ class MailingSettings(models.Model):
     )
 
     # many (clients) to many (settings)
-    clients = models.ManyToManyField(Client, related_name='mailingsettings')
-    owner = models.ForeignKey(User, verbose_name='Владелец', blank=True, null=True, on_delete=models.SET_NULL)
+    clients = models.ManyToManyField(Client, related_name="mailingsettings")
+    owner = models.ForeignKey(
+        User, verbose_name="Владелец", blank=True, null=True, on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         # Строковое отображение объекта
@@ -114,7 +119,6 @@ class MailingAttempt(models.Model):
     class Meta:
         verbose_name = "попытка рассылки"
         verbose_name_plural = "попытки рассылок"
-
 
 
 class Blog(models.Model):

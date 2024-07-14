@@ -47,9 +47,7 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
             return super().form_valid(form)
         else:
 
-            return self.render_to_response(
-                self.get_context_data(form=form)
-            )
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class ClientUpdateView(LoginRequiredMixin, UpdateView):
@@ -65,9 +63,8 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
             return super().form_valid(form)
         else:
 
-            return self.render_to_response(
-                self.get_context_data(form=form)
-            )
+            return self.render_to_response(self.get_context_data(form=form))
+
 
 """    def get_form_class(self):
         user = self.request.user
@@ -77,6 +74,7 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
             return ProductModeratorForm
         raise PermissionDenied"""
 
+
 class ClientDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Client  # Модель
     success_url = reverse_lazy(
@@ -85,7 +83,7 @@ class ClientDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     login_url = "/users/login/"
 
     def test_func(self):
-        pk = self.kwargs.get('pk')
+        pk = self.kwargs.get("pk")
         client = get_object_or_404(Client, pk=pk)
         return (self.request.user == client.owner) or self.request.user.is_superuser
 
@@ -119,9 +117,7 @@ class MailingMessageCreateView(LoginRequiredMixin, CreateView):
             return super().form_valid(form)
         else:
 
-            return self.render_to_response(
-                self.get_context_data(form=form)
-            )
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class MailingMessageUpdateView(LoginRequiredMixin, UpdateView):
@@ -137,9 +133,7 @@ class MailingMessageUpdateView(LoginRequiredMixin, UpdateView):
             return super().form_valid(form)
         else:
 
-            return self.render_to_response(
-                self.get_context_data(form=form)
-            )
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class MailingMessageDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -150,12 +144,15 @@ class MailingMessageDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteVi
     login_url = "/users/login/"
 
     def test_func(self):
-        pk = self.kwargs.get('pk')
+        pk = self.kwargs.get("pk")
         mailingmessage = get_object_or_404(MailingMessage, pk=pk)
-        return (self.request.user == mailingmessage.owner) or self.request.user.is_superuser
+        return (
+            self.request.user == mailingmessage.owner
+        ) or self.request.user.is_superuser
 
 
 ##########################
+
 
 class MailingSettingsListView(LoginRequiredMixin, ListView):
     model = MailingSettings
@@ -183,9 +180,7 @@ class MailingSettingsCreateView(LoginRequiredMixin, CreateView):
             return super().form_valid(form)
         else:
 
-            return self.render_to_response(
-                self.get_context_data(form=form)
-            )
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class MailingSettingsUpdateView(LoginRequiredMixin, UpdateView):
@@ -200,9 +195,7 @@ class MailingSettingsUpdateView(LoginRequiredMixin, UpdateView):
             self.object = form.save()
             return super().form_valid(form)
         else:
-            return self.render_to_response(
-                self.get_context_data(form=form)
-            )
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class MailingSettingsDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -213,9 +206,11 @@ class MailingSettingsDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteV
     login_url = "/users/login/"
 
     def test_func(self):
-        pk = self.kwargs.get('pk')
+        pk = self.kwargs.get("pk")
         mailingsettings = get_object_or_404(MailingSettings, pk=pk)
-        return (self.request.user == mailingsettings.owner) or self.request.user.is_superuser
+        return (
+            self.request.user == mailingsettings.owner
+        ) or self.request.user.is_superuser
 
 
 class TestPageView(TemplateView):
@@ -226,10 +221,8 @@ class MailingMessageListView(ListView):
     model = MailingMessage
     login_url = "/users/login/"
 
-
     """def get_queryset(self):
         return get_mailing_from_cache()"""
-
 
 
 class BlogListView(ListView):
@@ -300,7 +293,6 @@ class BlogUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse("mailing:blog", args=[self.kwargs.get("pk")])
-
 
 
 class BlogDeleteView(DeleteView):

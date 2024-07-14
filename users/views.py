@@ -12,11 +12,11 @@ from django.shortcuts import get_object_or_404, redirect
 
 from config.settings import EMAIL_HOST_USER
 
+
 class UserCreateView(CreateView):
     model = User
     form_class = UserRegisterForm
     success_url = reverse_lazy("users:login")
-
 
     def form_valid(self, form):
         user = form.save()
@@ -26,32 +26,34 @@ class UserCreateView(CreateView):
         user.save()
         host = self.request.get_host()
         url = f"http://{host}/users/email-confirm/{token}"
+        print(url)
 
-        #print(url)
+        # print(url)
         send_mail(
             subject="Подтверждение почты",
             message=f"Привет, перейдите по ссылке для подтверждения почты: {url}",
             from_email=EMAIL_HOST_USER,
-            recipient_list=[user.email]
+            recipient_list=[user.email],
         )
+        print("email sent")
         return super().form_valid(form)
 
 
 class UserResetPasswordView(PasswordResetView):
     model = User
     form_class = PasswordResetForm
-    template_name = 'users/password_reset.html'
+    template_name = "users/password_reset.html"
 
     def form_valid(self, form):
         form_email = form.cleaned_data.get("email")
         user = User.objects.get(email=form_email)
         characters = string.ascii_letters + string.digits + string.punctuation
-        new_password = ''.join(random.choice(characters) for _ in range(10))
+        new_password = "".join(random.choice(characters) for _ in range(10))
 
         user.set_password(new_password)
         user.save()
 
-        #print(url)
+        # print(url)
         send_mail(
             subject="Смена пароля",
             message=f"Привет, используйте новый пароль: {new_password}",
@@ -65,12 +67,12 @@ class UserResetPasswordView(PasswordResetView):
 class UserResetPasswordDoneView(PasswordResetView):
     model = User
     form_class = PasswordResetForm
-    template_name = 'users/password_reset.html'
-    success_url = reverse_lazy('users:login')
+    template_name = "users/password_reset.html"
+    success_url = reverse_lazy("users:login")
 
 
 def email_verification(request, token):
     user = get_object_or_404(User, token=token)
     user.is_active = True
     user.save()
-    return redirect(reverse('users:login'))
+    return redirect(reverse("users:login"))

@@ -25,6 +25,6 @@ def media_filter(path):
 @register.simple_tag
 def get_clients(data):
     if data:
-        clients = '\n '.join([str(item) for item in data.all()])
+        clients = "\n ".join([str(item) for item in data.all()])
         return clients
-    return ''
+    return ""

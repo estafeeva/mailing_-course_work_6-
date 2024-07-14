@@ -8,8 +8,8 @@ class ClientForm(ModelForm):
 
     class Meta:
         model = Client
-        #fields = "__all__"
-        exclude = ('owner',)
+        # fields = "__all__"
+        exclude = ("owner",)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -36,8 +36,8 @@ class MailingSettingsForm(ModelForm):
 
     class Meta:
         model = MailingSettings
-        #fields = "__all__"
-        exclude = ('owner',)
+        # fields = "__all__"
+        exclude = ("owner",)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -53,8 +53,8 @@ class MailingMessageForm(ModelForm):
 
     class Meta:
         model = MailingMessage
-        #fields = "__all__"
-        exclude = ('owner',)
+        # fields = "__all__"
+        exclude = ("owner",)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
