@@ -10,7 +10,6 @@ class MailingConfig(AppConfig):
     name = "mailing"
 
     def ready(self):
-        print(RUN_SCHEDULER)
         if RUN_SCHEDULER:
             from mailing.services import start_scheduler
             sleep(2)
