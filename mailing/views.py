@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
+from django.views.decorators.cache import cache_page
 from django.views.generic.base import TemplateView
 from django.views.generic import (
     ListView,
@@ -18,7 +19,7 @@ from mailing.forms import ClientForm, MailingSettingsForm, MailingMessageForm
 from mailing.models import MailingSettings, MailingMessage, Client, Blog, MailingAttempt
 from mailing.services import get_current_datetime
 
-
+@cache_page(60)
 def home_view(request):
     """количество рассылок всего,
         количество активных рассылок,
