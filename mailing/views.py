@@ -1,3 +1,5 @@
+from random import shuffle
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
@@ -18,7 +20,22 @@ from mailing.services import get_current_datetime
 
 
 def home_view(request):
-    context = {"object": "mailing"}
+    """количество рассылок всего,
+        количество активных рассылок,
+        количество уникальных клиентов для рассылок,
+        три случайные статьи из блога.
+        """
+    mailing_total = len(MailingSettings.objects.all())
+    mailing_active = len(MailingSettings.objects.filter(status__in=[MailingSettings.STARTED]))
+    clients_total = len(Client.objects.all())
+    blog_list = [item for item in Blog.objects.all()]
+    shuffle(blog_list)
+
+    context = {"mailing_total": mailing_total,
+               "mailing_active": mailing_active,
+               "clients_total": clients_total,
+               "blog_list": blog_list[:3],
+               }
     return render(request, "mailing/home.html", context=context)
 
 

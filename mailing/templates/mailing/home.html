@@ -9,8 +9,14 @@
 <div class="container">
     <div class="row text-center">
 
-        <div class="col-3">
-        Контент главной страницы
+        <div class="col-12">
+        количество рассылок всего: {{mailing_total}}<br>
+        количество активных рассылок: {{mailing_active}}<br>
+        количество уникальных клиентов для рассылок: {{clients_total}}<br>
+        три случайные статьи из блога:<br>
+            {% for blog in blog_list %}
+            <a href="blog_list/blog/{{ blog.pk }}">{{ blog.title }}</a><br>
+            {% endfor %}
         </div>
     </div>
 </div>
