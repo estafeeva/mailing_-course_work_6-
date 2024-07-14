@@ -111,6 +111,17 @@ class MailingSettings(models.Model):
         verbose_name = "рассылка (настройки)"
         verbose_name_plural = "рассылки (настройки)"
 
+        permissions = [
+            (
+                'can_view_mailingsettings',
+                'Can view all mailingsettings'
+            ),
+            (
+                'deactivate_mailingsettings',
+                'Can deactivate mailingsettings'
+            ),
+        ]
+
 
 class MailingAttempt(models.Model):
     """

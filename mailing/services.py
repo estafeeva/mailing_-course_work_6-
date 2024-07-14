@@ -7,6 +7,9 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from mailing.models import Client, MailingSettings, MailingAttempt
 from django.core.mail import send_mail
 
+from django.core.cache import cache
+from config.settings import CACHE_ENABLED
+
 def mailing_sending():
     print("Рассылка началась")
     current_datetime = get_current_datetime()
@@ -79,3 +82,15 @@ def get_current_datetime():
     current_datetime = datetime.now(zone)
 
     return current_datetime
+
+
+def get_objects_from_cache(model_, key=""):
+    """Получает данные по продуктам из кэша. Если кэш пуст, получает данные из БД."""
+    if not CACHE_ENABLED:
+        return model_.objects.all()
+    objects_ = cache.get(key)
+    if objects_ is not None:
+        return objects_
+    objects_ = model_.objects.all()
+    cache.set(key, objects_)
+    return objects_

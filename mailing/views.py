@@ -67,15 +67,6 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
             return self.render_to_response(self.get_context_data(form=form))
 
 
-"""    def get_form_class(self):
-        user = self.request.user
-        if user == self.object.owner:
-            return ProductForm
-        if user.has_perm("catalog.set_published") and user.has_perm("catalog.change_description") and user.has_perm("catalog.change_category"):
-            return ProductModeratorForm
-        raise PermissionDenied"""
-
-
 class ClientDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Client  # Модель
     success_url = reverse_lazy(
@@ -152,6 +143,14 @@ class MailingMessageDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteVi
         ) or self.request.user.is_superuser
 
 
+
+class MailingMessageListView(ListView):
+    model = MailingMessage
+    login_url = "/users/login/"
+
+    """def get_queryset(self):
+        return get_mailing_from_cache()"""
+
 ##########################
 
 
@@ -216,14 +215,6 @@ class MailingSettingsDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteV
 
 class TestPageView(TemplateView):
     template_name = "mailing/test.html"
-
-
-class MailingMessageListView(ListView):
-    model = MailingMessage
-    login_url = "/users/login/"
-
-    """def get_queryset(self):
-        return get_mailing_from_cache()"""
 
 
 class BlogListView(ListView):
@@ -316,7 +307,7 @@ def change_status(request, pk):
         return render(request, 'mailing/home.html')
     else:
         if not (request.user == mailing.owner or
-                request.user.has_perm('mailing.deactivate_mailing')):
+                request.user.has_perm('mailing.deactivate_mailingsettings')):
             return render(request, 'mailing/home.html')
         else:
 
