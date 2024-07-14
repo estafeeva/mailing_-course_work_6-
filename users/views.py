@@ -2,8 +2,9 @@ import random
 import secrets
 import string
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordResetView
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 from users.models import User
 from users.forms import UserRegisterForm, PasswordResetForm
 from django.urls import reverse_lazy, reverse
@@ -76,3 +77,18 @@ def email_verification(request, token):
     user.is_active = True
     user.save()
     return redirect(reverse("users:login"))
+
+
+class UserListView(LoginRequiredMixin, ListView):
+    model = User
+    login_url = "/users/login/"
+
+
+def change_status(request, pk):
+    user = User.objects.get(pk=pk)
+    if user.is_active:
+        user.is_active = False
+    else:
+        user.is_active = True
+    user.save()
+    return redirect('users:list')

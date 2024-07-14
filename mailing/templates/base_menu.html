@@ -16,5 +16,8 @@
         <a href="{% url 'users:login' %}" class="p-2 btn btn-outline-primary">Вход</a>
         <a href="{% url 'users:register' %}" class="p-2 btn btn-outline-primary">Регистрация</a>
         {% endif %}
+        {% if perms.users.can_view_users %}
+        <a href="{% url 'users:list' %}" class="p-2 btn btn-outline-primary">Пользователи</a>
+        {% endif %}
     </nav>
 </div>
