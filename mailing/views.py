@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic.base import TemplateView
 from django.views.generic import (
@@ -13,7 +13,8 @@ from django.views.generic import (
 from pytils.translit import slugify
 
 from mailing.forms import ClientForm, MailingSettingsForm, MailingMessageForm
-from mailing.models import MailingSettings, MailingMessage, Client, Blog
+from mailing.models import MailingSettings, MailingMessage, Client, Blog, MailingAttempt
+from mailing.services import get_current_datetime
 
 
 def home_view(request):
@@ -300,3 +301,34 @@ class BlogDeleteView(DeleteView):
     success_url = reverse_lazy(
         "mailing:blog_list"
     )  # Адрес для перенаправления после успешного удаления
+
+
+class MailingAttemptListView(LoginRequiredMixin, ListView):
+    model = MailingAttempt
+    login_url = "/users/login/"
+
+
+def change_status(request, pk):
+
+    mailing = get_object_or_404(MailingSettings, pk=pk)
+
+    if mailing is None:
+        return render(request, 'mailing/home.html')
+    else:
+        if not (request.user == mailing.owner or
+                request.user.has_perm('mailing.deactivate_mailing')):
+            return render(request, 'mailing/home.html')
+        else:
+
+            if mailing.status == mailing.COMPLETED:
+
+                if mailing.first_sent_datetime < get_current_datetime():
+                    mailing.status = mailing.STARTED
+                else:
+                    mailing.status = mailing.CREATED
+            else:
+                mailing.status = mailing.COMPLETED
+
+            mailing.save()
+
+            return redirect('mailing:list_mailingsettings')

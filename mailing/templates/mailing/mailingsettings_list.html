@@ -17,6 +17,13 @@
                 <div class="card-body">
                     <a class="p-2 btn btn-outline-primary" href="update/{{ object.pk }}">Обновить</a>
                     <a class="p-2 btn btn-outline-primary" href="delete/{{ object.pk }}">Удалить</a>
+                    <a class="p-2 btn btn-outline-primary" href="change_status/{{ object.pk }}">
+                        {% if object.status != object.COMPLETED %}
+                            Завершить
+                        {% else %}
+                            Начать
+                        {% endif %}
+                    </a>
                 </div>
             </div>
         </div>

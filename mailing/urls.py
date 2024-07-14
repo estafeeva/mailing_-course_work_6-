@@ -19,11 +19,13 @@ from mailing.views import (
     MailingMessageDeleteView,
     MailingSettingsDetailView,
     MailingSettingsUpdateView,
+    MailingAttemptListView,
     BlogListView,
     BlogDetailView,
     BlogCreateView,
     BlogUpdateView,
     BlogDeleteView,
+    change_status
 )
 
 app_name = MailingConfig.name
@@ -63,6 +65,11 @@ urlpatterns = [
         name="delete_mailingsettings",
     ),
     path(
+        "mailingsettings/change_status/<int:pk>",
+        change_status,
+        name="change_status",
+    ),
+    path(
         "mailingmessage/", MailingMessageListView.as_view(), name="list_mailingmessage"
     ),
     path(
@@ -84,6 +91,11 @@ urlpatterns = [
         "mailingmessage/delete/<int:pk>",
         MailingMessageDeleteView.as_view(),
         name="delete_mailingmessage",
+    ),
+    path(
+        "mailingattempt/",
+        MailingAttemptListView.as_view(),
+        name="list_mailingattempt",
     ),
     path("blog_list/", BlogListView.as_view(), name="blog_list"),
     path("blog_list/blog/<int:pk>", BlogDetailView.as_view(), name="blog"),
