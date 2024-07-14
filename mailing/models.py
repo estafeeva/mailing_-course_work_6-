@@ -56,19 +56,40 @@ class MailingMessage(models.Model):
 
 
 class MailingSettings(models.Model):
-    first_sent_datetime = models.CharField(
+    DAILY = "Раз в день"
+    WEEKLY = "Раз в неделю"
+    MONTHLY = "Раз в месяц"
+
+    PERIODICITY_CHOICES = [
+        (DAILY, "Раз в день"),
+        (WEEKLY, "Раз в неделю"),
+        (MONTHLY, "Раз в месяц"),
+    ]
+
+    CREATED = "Создана"
+    STARTED = "Запущена"
+    COMPLETED = "Завершена"
+
+    STATUS_CHOICES = [
+        (COMPLETED, "Завершена"),
+        (CREATED, "Создана"),
+        (STARTED, "Запущена"),
+    ]
+
+    first_sent_datetime = models.DateTimeField(
         verbose_name="дата и время первой отправки рассылки",
         help_text="Укажите дату и время первой отправки рассылки",
         #        format="%d-%m-%Y %H^%M",
     )
     period = models.CharField(
         max_length=150,
+        choices=PERIODICITY_CHOICES,
         verbose_name="периодичность",
         help_text="Укажите периодичность: раз в день, раз в неделю, раз в месяц",
     )
-    #    status = models.ForeignKey(StatusMailing, null=True, verbose_name='Статус', on_delete=models.SET_NULL)
+    status = models.CharField(max_length=150, choices=STATUS_CHOICES, default=CREATED, verbose_name="Статус")
 
-    # one (text) to many (settings)
+     # one (text) to many (settings)
     mailing_message = models.ForeignKey(
         MailingMessage,
         null=True,
@@ -98,11 +119,18 @@ class MailingAttempt(models.Model):
     статус попытки (успешно / не успешно);
     ответ почтового сервера, если он был.
     """
+    SUCCESS = 'Успешно'
+    FAIL = 'Неудача'
+    ATTEMPT_STATUS = [
+        (SUCCESS, 'Успешно'),
+        (FAIL, 'Неудача'),
+    ]
 
     last_try_sent_datetime = models.DateTimeField(
-        verbose_name="дата и время последней попытки рассылки"
+        verbose_name="дата и время последней попытки рассылки",
+        auto_now_add=True
     )
-    status = models.BooleanField(null=True, verbose_name="Статус")
+    status = models.CharField(max_length=50, choices=ATTEMPT_STATUS, null=True, verbose_name="Статус")
     server_reply = models.TextField(
         verbose_name="ответ почтового сервера", null=True, blank=True
     )

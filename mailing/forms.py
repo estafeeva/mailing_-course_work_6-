@@ -37,7 +37,10 @@ class MailingSettingsForm(ModelForm):
     class Meta:
         model = MailingSettings
         # fields = "__all__"
-        exclude = ("owner",)
+        exclude = ("owner", "status")
+        widgets = {
+            'first_sent_datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'})
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
