@@ -27,16 +27,13 @@ class UserCreateView(CreateView):
         user.save()
         host = self.request.get_host()
         url = f"http://{host}/users/email-confirm/{token}"
-        print(url)
 
-        # print(url)
         send_mail(
             subject="Подтверждение почты",
             message=f"Привет, перейдите по ссылке для подтверждения почты: {url}",
             from_email=EMAIL_HOST_USER,
             recipient_list=[user.email],
         )
-        print("email sent")
         return super().form_valid(form)
 
 
@@ -54,7 +51,6 @@ class UserResetPasswordView(PasswordResetView):
         user.set_password(new_password)
         user.save()
 
-        # print(url)
         send_mail(
             subject="Смена пароля",
             message=f"Привет, используйте новый пароль: {new_password}",

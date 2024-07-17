@@ -86,10 +86,10 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class ClientDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Client  # Модель
+    model = Client
     success_url = reverse_lazy(
         "mailing:list_client"
-    )  # Адрес для перенаправления после успешного удаления
+    )
     login_url = "/users/login/"
 
     def test_func(self):
@@ -137,7 +137,6 @@ class MailingMessageUpdateView(LoginRequiredMixin, UpdateView):
     login_url = "/users/login/"
 
     def form_valid(self, form):
-
         if form.is_valid():
             self.object = form.save()
             return super().form_valid(form)
@@ -147,13 +146,14 @@ class MailingMessageUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class MailingMessageDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = MailingMessage  # Модель
+    model = MailingMessage
     success_url = reverse_lazy(
         "mailing:list_mailingmessage"
-    )  # Адрес для перенаправления после успешного удаления
+    )
     login_url = "/users/login/"
 
     def test_func(self):
+        """возвращает True, если user - владелец или суперюзер"""
         pk = self.kwargs.get("pk")
         mailingmessage = get_object_or_404(MailingMessage, pk=pk)
         return (
@@ -166,8 +166,6 @@ class MailingMessageListView(ListView):
     model = MailingMessage
     login_url = "/users/login/"
 
-    """def get_queryset(self):
-        return get_mailing_from_cache()"""
 
 ##########################
 
@@ -189,7 +187,6 @@ class MailingSettingsCreateView(LoginRequiredMixin, CreateView):
     login_url = "/users/login/"
 
     def form_valid(self, form):
-
         if form.is_valid():
             self.object = form.save()
             user = self.request.user
@@ -208,7 +205,6 @@ class MailingSettingsUpdateView(LoginRequiredMixin, UpdateView):
     login_url = "/users/login/"
 
     def form_valid(self, form):
-
         if form.is_valid():
             self.object = form.save()
             return super().form_valid(form)
@@ -217,13 +213,14 @@ class MailingSettingsUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class MailingSettingsDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = MailingSettings  # Модель
+    model = MailingSettings
     success_url = reverse_lazy(
         "mailing:list_mailingsettings"
-    )  # Адрес для перенаправления после успешного удаления
+    )
     login_url = "/users/login/"
 
     def test_func(self):
+        """возвращает True, если user - владелец или суперюзер"""
         pk = self.kwargs.get("pk")
         mailingsettings = get_object_or_404(MailingSettings, pk=pk)
         return (
@@ -238,9 +235,9 @@ class TestPageView(TemplateView):
 class BlogListView(ListView):
     model = Blog
 
-    """get_queryset выводит в список статей только те, которые имеют положительный признак публикации"""
-
     def get_queryset(self, *args, **kwargs):
+        """get_queryset выводит в список статей только те, которые имеют положительный признак публикации"""
+
         queryset = super().get_queryset(*args, **kwargs)
         queryset = queryset.filter(is_publication=True)
         return queryset
@@ -249,9 +246,8 @@ class BlogListView(ListView):
 class BlogDetailView(DetailView):
     model = Blog
 
-    """При открытии отдельной статьи get_object увеличивает счетчик просмотров"""
-
     def get_object(self, queryset=None):
+        """При открытии отдельной статьи get_object увеличивает счетчик просмотров"""
         self.object = super().get_object(queryset)
         self.object.views_count += 1
         self.object.save()
@@ -259,19 +255,18 @@ class BlogDetailView(DetailView):
 
 
 class BlogCreateView(CreateView):
-    model = Blog  # Модель
+    model = Blog
     fields = (
         "title",
         "content",
         "preview",
-    )  # Поля для заполнения при создании
+    )
     success_url = reverse_lazy(
         "mailing:blog_list"
     )  # Адрес для перенаправления после успешного создания
 
-    """form_valid при создании динамически формирует slug name для заголовка"""
-
     def form_valid(self, form):
+        """form_valid при создании динамически формирует slug name для заголовка"""
         if form.is_valid():
             new_mat = form.save()
             new_mat.slug = slugify(new_mat.title)
@@ -281,17 +276,15 @@ class BlogCreateView(CreateView):
 
 
 class BlogUpdateView(UpdateView):
-    model = Blog  # Модель
+    model = Blog
     fields = (
         "title",
         "content",
         "preview",
-    )  # Поля для редактирования
-    #    success_url = reverse_lazy('catalog:blog_list') # Адрес для перенаправления после успешного редактирования
-
-    """form_valid при создании динамически формирует slug name для заголовка"""
+    )
 
     def form_valid(self, form):
+        """form_valid при создании динамически формирует slug name для заголовка"""
         if form.is_valid():
             new_mat = form.save()
             new_mat.slug = slugify(new_mat.title)
@@ -299,17 +292,19 @@ class BlogUpdateView(UpdateView):
 
         return super().form_valid(form)
 
-    """После успешного редактирования записи get_success_url перенаправляет пользователя на просмотр этой статьи"""
 
     def get_success_url(self):
+        """
+        После успешного редактирования записи get_success_url перенаправляет пользователя на просмотр этой статьи
+        """
         return reverse("mailing:blog", args=[self.kwargs.get("pk")])
 
 
 class BlogDeleteView(DeleteView):
-    model = Blog  # Модель
+    model = Blog
     success_url = reverse_lazy(
         "mailing:blog_list"
-    )  # Адрес для перенаправления после успешного удаления
+    )
 
 
 class MailingAttemptListView(LoginRequiredMixin, ListView):

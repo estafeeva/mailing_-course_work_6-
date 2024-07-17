@@ -22,7 +22,7 @@ def mailing_sending():
     В БД создается запись новой попытки отправки рассылок.
 
     """
-    print("Рассылка началась")
+#    print("Рассылка началась")
     current_datetime = get_current_datetime()
 
 
@@ -55,8 +55,7 @@ def mailing_sending():
             mailing.save()
 
             try:
-                print(f'sending "{mailing.mailing_message.topic}" to "{[client.email for client in mailing.clients.all()]}"')
-                # server_response = ""
+                #print(f'sending "{mailing.mailing_message.topic}" to "{[client.email for client in mailing.clients.all()]}"')
 
                 server_response = send_mail(
                     subject=mailing.mailing_message.topic,
@@ -68,13 +67,12 @@ def mailing_sending():
                 MailingAttempt.objects.create(status=MailingAttempt.SUCCESS,
                                                   server_reply=server_response,
                                                   mailing=mailing, )
-                print('success')
+
             except smtplib.SMTPException as e:
                 # При ошибке почтовика получаем ответ сервера - ошибка, которая записывается в е
                 MailingAttempt.objects.create(status=MailingAttempt.FAIL,
                                                   server_reply=str(e),
                                                   mailing=mailing)
-                print('fail')
 
 
 def start_scheduler():
