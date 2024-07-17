@@ -5,6 +5,11 @@ from pytils.translit import slugify
 
 
 class Client(models.Model):
+    """Клиент сервиса:
+    контактный email,
+    Ф. И. О.,
+    комментарий.
+    """
     email = models.EmailField(unique=True, verbose_name="Email")
     name = models.CharField(
         max_length=150,
@@ -56,6 +61,12 @@ class MailingMessage(models.Model):
 
 
 class MailingSettings(models.Model):
+    """
+        Рассылка (настройки):
+    дата и время первой отправки рассылки;
+    периодичность: раз в день, раз в неделю, раз в месяц;
+    статус рассылки (например, завершена, создана, запущена).
+    """
     DAILY = "Раз в день"
     WEEKLY = "Раз в неделю"
     MONTHLY = "Раз в месяц"

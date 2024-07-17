@@ -4,7 +4,7 @@ from mailing.models import Client, MailingSettings, MailingMessage
 
 
 class ClientForm(ModelForm):
-    """Пользователи могут создавать новых клиенто"""
+    """Пользователи могут создавать новых клиентов"""
 
     class Meta:
         model = Client

@@ -85,6 +85,7 @@ class UserListView(LoginRequiredMixin, ListView):
 
 
 def change_status(request, pk):
+    """Возможность блокировать/разблокировать пользователей сервиса."""
     user = User.objects.get(pk=pk)
     if user.is_active:
         user.is_active = False

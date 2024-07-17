@@ -22,10 +22,10 @@ from mailing.services import get_current_datetime
 @cache_page(60)
 def home_view(request):
     """количество рассылок всего,
-        количество активных рассылок,
-        количество уникальных клиентов для рассылок,
-        три случайные статьи из блога.
-        """
+    количество активных рассылок,
+    количество уникальных клиентов для рассылок,
+    три случайные статьи из блога.
+    """
     mailing_total = len(MailingSettings.objects.all())
     mailing_active = len(MailingSettings.objects.filter(status__in=[MailingSettings.STARTED]))
     clients_total = len(Client.objects.all())
@@ -318,6 +318,9 @@ class MailingAttemptListView(LoginRequiredMixin, ListView):
 
 
 def change_status(request, pk):
+    """
+    Активирует/деактивирует статус настройки рассылки.
+    """
 
     mailing = get_object_or_404(MailingSettings, pk=pk)
 

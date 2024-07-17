@@ -3,7 +3,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    """Модель пользователь:
+    """
+    Модель пользователь:
     электронная почта как поле для авторизации
     аватар,
     номер телефона,

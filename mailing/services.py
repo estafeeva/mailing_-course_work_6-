@@ -11,6 +11,17 @@ from django.core.cache import cache
 from config.settings import CACHE_ENABLED
 
 def mailing_sending():
+    """
+    Реализует логику приложения mailing:
+    выбирает из настроек рассылок активные ( статус: STARTED или CREATED),
+    проверяет, были ли прошлые попытки рассылки,
+    выбирает дату последней попытки,
+    прибавляет период,
+    получает новую дату попытки.
+    Если новая дата <= текущей даты, то запускается рассылка.
+    В БД создается запись новой попытки отправки рассылок.
+
+    """
     print("Рассылка началась")
     current_datetime = get_current_datetime()
 
@@ -67,6 +78,11 @@ def mailing_sending():
 
 
 def start_scheduler():
+    """
+    Запускает планировщика задач (рассылок).
+    Запускается при старте приложения mailing, описано в apps.py.
+    В файле .env можно отключить автоматический запуск, изменив значение переменной RUN_SCHEDULER.
+    """
     scheduler = BackgroundScheduler()
 
     if not scheduler.get_jobs():
@@ -77,7 +93,7 @@ def start_scheduler():
 
 
 def get_current_datetime():
-
+    """Получает текущие дату и время с учетом таймзоны."""
     zone = pytz.timezone(settings.TIME_ZONE)
     current_datetime = datetime.now(zone)
 
